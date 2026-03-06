@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Budget Category Selector - FastPay Oculus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-content">
+      <img src="img/logo.png" alt="Oculus FastPay" class="app-logo">
+      <h1>Budget Category Selector</h1>
+      <p class="subtitle">Select and organise the spending categories relevant to your household.</p>
+    </div>
+  </header>
+
+  <div class="client-name-bar">
+    <label for="client-name">Client name</label>
+    <input type="text" id="client-name" placeholder="e.g. John and Sarah Smith" autocomplete="off">
+  </div>
+
+  <main class="two-panel">
+
+    <section class="panel panel-left" id="my-budget">
+      <div class="panel-header">
+        <h2>Family Budget</h2>
+        <span class="panel-badge" id="total-count">0 categories</span>
+      </div>
+
+      <div id="buckets-container"></div>
+
+      <div class="custom-controls">
+        <div class="custom-input-row">
+          <input type="text" id="new-bucket-name" placeholder="New bucket name" maxlength="40">
+          <button id="add-bucket-btn" class="btn-small btn-accent">Add Bucket</button>
+        </div>
+        <span class="input-hint" id="bucket-limit-msg">0 of 3 custom buckets used</span>
+
+        <div class="custom-input-row" style="margin-top: 12px;">
+          <input type="text" id="new-category-name" placeholder="New category name" maxlength="50">
+          <select id="target-bucket-select"></select>
+          <button id="add-category-btn" class="btn-small btn-accent">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel-right" id="additional-categories">
+      <div class="panel-header">
+        <h2>Additional Categories</h2>
+        <p class="panel-hint">Browse and add categories relevant to your situation.</p>
+      </div>
+
+      <div id="catalogue-container"></div>
+    </section>
+
+  </main>
+
+  <footer class="actions-bar">
+    <button id="continue-btn" class="btn-primary" disabled>Save as PDF</button>
+  </footer>
+
+  <div id="pdf-export-content" aria-hidden="true"></div>
+
+  <script src="lib/sortable.min.js"></script>
+  <script src="lib/jspdf.umd.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/drag.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="js/logo-data.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
