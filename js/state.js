@@ -5,7 +5,8 @@ var BudgetState = (function() {
     clientName: '',
     buckets: [],
     assignedCategoryIds: new Set(),
-    customBucketCount: 0
+    customBucketCount: 0,
+    currentStep: 1
   };
 
   function _notify() {
@@ -20,7 +21,7 @@ var BudgetState = (function() {
         frequency: b.frequency || '',
         isDefault: b.isDefault,
         categories: b.categories.map(function(c) {
-          return { id: c.id, name: c.name, isCustom: c.isCustom, budget: c.budget || 0 };
+          return { id: c.id, name: c.name, isCustom: c.isCustom, budget: c.budget || 0, description: c.description || '' };
         })
       };
     });
@@ -45,6 +46,7 @@ var BudgetState = (function() {
       _state.buckets = _deepCloneBuckets(DEFAULT_BUCKETS);
       _state.assignedCategoryIds = new Set();
       _state.customBucketCount = 0;
+      _state.currentStep = 1;
       _state.buckets.forEach(function(bucket) {
         bucket.categories.forEach(function(cat) {
           _state.assignedCategoryIds.add(cat.id);
@@ -77,7 +79,8 @@ var BudgetState = (function() {
         id: category.id,
         name: category.name,
         isCustom: category.isCustom || false,
-        budget: 0
+        budget: 0,
+        description: ''
       });
       _state.assignedCategoryIds.add(category.id);
       _notify();
@@ -177,7 +180,8 @@ var BudgetState = (function() {
         id: generateId(trimmed),
         name: trimmed,
         isCustom: true,
-        budget: 0
+        budget: 0,
+        description: ''
       };
       bucket.categories.push(cat);
       _state.assignedCategoryIds.add(cat.id);
@@ -217,6 +221,24 @@ var BudgetState = (function() {
         b.categories.forEach(function(c) { total += (c.budget || 0); });
       });
       return total;
+    },
+
+    setCategoryDescription: function(bucketId, categoryId, text) {
+      var bucket = _findBucket(bucketId);
+      if (!bucket) return;
+      var idx = _findCategoryInBucket(bucket, categoryId);
+      if (idx === -1) return;
+      bucket.categories[idx].description = text || '';
+      // Don't call _notify() — same pattern as setCategoryBudget to avoid losing textarea focus
+    },
+
+    setStep: function(step) {
+      _state.currentStep = step;
+      _notify();
+    },
+
+    getStep: function() {
+      return _state.currentStep;
     },
 
     getBucketList: function() {

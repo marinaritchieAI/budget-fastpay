@@ -25,10 +25,22 @@
       BudgetState.setClientName(this.value);
     });
 
-    // Continue button
+    // Step navigation
     var continueBtn = document.getElementById('continue-btn');
+    var backBtn = document.getElementById('back-btn');
+
     continueBtn.addEventListener('click', function() {
-      PdfExport.generatePdf();
+      if (BudgetState.getStep() === 1) {
+        BudgetState.setStep(2);
+        Renderer.renderStep(2);
+      } else {
+        PdfExport.generatePdf();
+      }
+    });
+
+    backBtn.addEventListener('click', function() {
+      BudgetState.setStep(1);
+      Renderer.renderStep(1);
     });
 
     // Handle window resize for mobile detection

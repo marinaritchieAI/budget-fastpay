@@ -118,7 +118,13 @@ var PdfExport = (function() {
 
       // Categories
       bucket.categories.forEach(function(cat) {
-        y = checkPage(doc, y, 7);
+        // Estimate space needed for this category
+        var neededHeight = 7;
+        if (cat.description && cat.description.trim()) {
+          var estimatedLines = Math.ceil(cat.description.trim().length / 70);
+          neededHeight += 1 + (estimatedLines * 3.5);
+        }
+        y = checkPage(doc, y, neededHeight);
 
         var catName = cat.name;
         if (cat.isCustom) catName += ' (custom)';
@@ -140,6 +146,21 @@ var PdfExport = (function() {
         doc.line(MARGIN + 4, y + 5.5, PAGE_W - MARGIN - 4, y + 5.5);
 
         y += 7;
+
+        // Description (if provided)
+        if (cat.description && cat.description.trim()) {
+          y += 0.5;
+          doc.setFont('helvetica', 'italic');
+          doc.setFontSize(8.5);
+          doc.setTextColor(GREY_TEXT[0], GREY_TEXT[1], GREY_TEXT[2]);
+          var descLines = doc.splitTextToSize(cat.description.trim(), CONTENT_W - 16);
+          descLines.forEach(function(line) {
+            y = checkPage(doc, y, 4);
+            doc.text(line, MARGIN + 8, y + 2.5);
+            y += 3.5;
+          });
+          y += 1;
+        }
       });
 
       // Bucket total

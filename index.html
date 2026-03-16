@@ -20,49 +20,61 @@
     </div>
   </header>
 
-  <div class="client-name-bar">
-    <label for="client-name">Client name</label>
-    <input type="text" id="client-name" placeholder="e.g. John and Sarah Smith" autocomplete="off">
+  <div id="step-1-content">
+    <div class="client-name-bar">
+      <label for="client-name">Client name</label>
+      <input type="text" id="client-name" placeholder="e.g. John and Sarah Smith" autocomplete="off">
+    </div>
+
+    <main class="two-panel">
+
+      <section class="panel panel-left" id="my-budget">
+        <div class="panel-header">
+          <h2>Family Budget</h2>
+          <span class="panel-badge" id="total-count">0 categories</span>
+        </div>
+
+        <div id="buckets-container"></div>
+
+        <div class="custom-controls">
+          <div class="custom-input-row">
+            <input type="text" id="new-bucket-name" placeholder="New bucket name" maxlength="40">
+            <button id="add-bucket-btn" class="btn-small btn-accent">Add Bucket</button>
+          </div>
+          <span class="input-hint" id="bucket-limit-msg">0 of 3 custom buckets used</span>
+
+          <div class="custom-input-row" style="margin-top: 12px;">
+            <input type="text" id="new-category-name" placeholder="New category name" maxlength="50">
+            <select id="target-bucket-select"></select>
+            <button id="add-category-btn" class="btn-small btn-accent">Add</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-right" id="additional-categories">
+        <div class="panel-header">
+          <h2>Additional Categories</h2>
+          <p class="panel-hint">Browse and add categories relevant to your situation.</p>
+        </div>
+
+        <div id="catalogue-container"></div>
+      </section>
+
+    </main>
   </div>
 
-  <main class="two-panel">
-
-    <section class="panel panel-left" id="my-budget">
-      <div class="panel-header">
-        <h2>Family Budget</h2>
-        <span class="panel-badge" id="total-count">0 categories</span>
-      </div>
-
-      <div id="buckets-container"></div>
-
-      <div class="custom-controls">
-        <div class="custom-input-row">
-          <input type="text" id="new-bucket-name" placeholder="New bucket name" maxlength="40">
-          <button id="add-bucket-btn" class="btn-small btn-accent">Add Bucket</button>
-        </div>
-        <span class="input-hint" id="bucket-limit-msg">0 of 3 custom buckets used</span>
-
-        <div class="custom-input-row" style="margin-top: 12px;">
-          <input type="text" id="new-category-name" placeholder="New category name" maxlength="50">
-          <select id="target-bucket-select"></select>
-          <button id="add-category-btn" class="btn-small btn-accent">Add</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel-right" id="additional-categories">
-      <div class="panel-header">
-        <h2>Additional Categories</h2>
-        <p class="panel-hint">Browse and add categories relevant to your situation.</p>
-      </div>
-
-      <div id="catalogue-container"></div>
-    </section>
-
-  </main>
+  <section id="step-2-content" class="review-screen" style="display:none;">
+    <div class="review-header">
+      <h2>Review Your Budget</h2>
+      <p class="subtitle">Adjust amounts and add descriptions for each category.</p>
+    </div>
+    <div id="review-buckets-container"></div>
+    <div class="review-grand-total" id="review-grand-total"></div>
+  </section>
 
   <footer class="actions-bar">
-    <button id="continue-btn" class="btn-primary" disabled>Save as PDF</button>
+    <button id="back-btn" class="btn-secondary" style="display:none;">Back to Selection</button>
+    <button id="continue-btn" class="btn-primary" disabled>Continue</button>
   </footer>
 
   <div id="pdf-export-content" aria-hidden="true"></div>

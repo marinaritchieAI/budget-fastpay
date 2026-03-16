@@ -315,6 +315,118 @@ var Renderer = (function() {
     });
   }
 
+  function renderReview() {
+    var reviewContainer = document.getElementById('review-buckets-container');
+    var reviewGrandTotal = document.getElementById('review-grand-total');
+    var state = BudgetState.getState();
+    var html = '';
+
+    state.buckets.forEach(function(bucket) {
+      if (bucket.categories.length === 0) return;
+      var bucketTotal = BudgetState.getBucketTotal(bucket.id);
+      var isStaging = bucket.id === 'uncategorised';
+      var headerClass = isStaging ? 'bucket-header staging' : 'bucket-header';
+
+      html += '<div class="review-bucket" data-bucket-id="' + bucket.id + '">';
+      html += '<div class="' + headerClass + '">';
+      html += '<div class="bucket-header-left">';
+      html += '<span class="bucket-name">' + escapeHtml(bucket.name) + '</span>';
+      html += '<span class="bucket-count">' + bucket.categories.length + '</span>';
+      html += '</div>';
+      if (bucket.frequency) {
+        html += '<span class="bucket-frequency">' + escapeHtml(bucket.frequency) + '</span>';
+      }
+      html += '</div>';
+
+      bucket.categories.forEach(function(cat) {
+        var budgetVal = cat.budget || 0;
+        html += '<div class="review-category">';
+        html += '<div class="review-cat-row">';
+        html += '<span class="cat-name">' + escapeHtml(cat.name) + '</span>';
+        html += '<input type="number" class="budget-input" min="0" step="1" placeholder="0" value="' + (budgetVal > 0 ? Math.round(budgetVal) : '') + '" data-id="' + cat.id + '" data-bucket-id="' + bucket.id + '">';
+        html += '</div>';
+        html += '<textarea class="description-input" placeholder="Add a description (optional)" data-id="' + cat.id + '" data-bucket-id="' + bucket.id + '" rows="1">' + escapeHtml(cat.description || '') + '</textarea>';
+        html += '</div>';
+      });
+
+      // Bucket total
+      html += '<div class="bucket-total" data-bucket-id="' + bucket.id + '">';
+      html += '<span class="total-label">Total:</span>';
+      html += '<span class="total-value">' + formatCurrency(bucketTotal) + '</span>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+
+    reviewContainer.innerHTML = html;
+
+    // Grand total
+    var grandTotal = BudgetState.getGrandTotal();
+    reviewGrandTotal.innerHTML = '<div class="grand-total"><span class="total-label">Grand Total:</span><span class="total-value">' + formatCurrency(grandTotal) + '</span></div>';
+
+    // Wire budget inputs
+    var budgetInputs = reviewContainer.querySelectorAll('.budget-input');
+    budgetInputs.forEach(function(input) {
+      input.addEventListener('input', function() {
+        var catId = this.getAttribute('data-id');
+        var bucketId = this.getAttribute('data-bucket-id');
+        BudgetState.setCategoryBudget(bucketId, catId, this.value);
+        updateReviewTotals();
+      });
+    });
+
+    // Wire description textareas
+    var descInputs = reviewContainer.querySelectorAll('.description-input');
+    descInputs.forEach(function(textarea) {
+      textarea.addEventListener('input', function() {
+        var catId = this.getAttribute('data-id');
+        var bucketId = this.getAttribute('data-bucket-id');
+        BudgetState.setCategoryDescription(bucketId, catId, this.value);
+        // Auto-resize textarea
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+    });
+  }
+
+  function updateReviewTotals() {
+    var reviewContainer = document.getElementById('review-buckets-container');
+    var state = BudgetState.getState();
+    state.buckets.forEach(function(bucket) {
+      var totalEl = reviewContainer.querySelector('.bucket-total[data-bucket-id="' + bucket.id + '"] .total-value');
+      if (totalEl) {
+        totalEl.textContent = formatCurrency(BudgetState.getBucketTotal(bucket.id));
+      }
+    });
+    var grandEl = document.querySelector('#review-grand-total .total-value');
+    if (grandEl) {
+      grandEl.textContent = formatCurrency(BudgetState.getGrandTotal());
+    }
+  }
+
+  function renderStep(step) {
+    var step1 = document.getElementById('step-1-content');
+    var step2 = document.getElementById('step-2-content');
+    var backBtn = document.getElementById('back-btn');
+    var contBtn = document.getElementById('continue-btn');
+
+    if (step === 1) {
+      step1.style.display = '';
+      step2.style.display = 'none';
+      backBtn.style.display = 'none';
+      contBtn.textContent = 'Continue';
+      contBtn.disabled = !BudgetState.isContinueEnabled();
+    } else {
+      step1.style.display = 'none';
+      step2.style.display = '';
+      backBtn.style.display = '';
+      contBtn.textContent = 'Save as PDF';
+      contBtn.disabled = false;
+      renderReview();
+    }
+    window.scrollTo(0, 0);
+  }
+
   function renderContinueButton() {
     continueBtn.disabled = !BudgetState.isContinueEnabled();
   }
@@ -348,6 +460,8 @@ var Renderer = (function() {
     renderBuckets: renderBuckets,
     renderCatalogue: renderCatalogue,
     renderContinueButton: renderContinueButton,
+    renderReview: renderReview,
+    renderStep: renderStep,
     escapeHtml: escapeHtml
   };
 })();
