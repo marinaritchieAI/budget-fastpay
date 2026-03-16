@@ -19,12 +19,6 @@
     Renderer.render();
     CustomControls.onStateChange();
 
-    // Client name input
-    var clientNameInput = document.getElementById('client-name');
-    clientNameInput.addEventListener('input', function() {
-      BudgetState.setClientName(this.value);
-    });
-
     // Step navigation
     var continueBtn = document.getElementById('continue-btn');
     var backBtn = document.getElementById('back-btn');
@@ -33,6 +27,14 @@
       if (BudgetState.getStep() === 1) {
         BudgetState.setStep(2);
         Renderer.renderStep(2);
+        // Wire client name input on Step 2 after it becomes visible
+        var clientNameInput = document.getElementById('client-name');
+        if (clientNameInput) {
+          clientNameInput.value = BudgetState.getState().clientName || '';
+          clientNameInput.addEventListener('input', function() {
+            BudgetState.setClientName(this.value);
+          });
+        }
       } else {
         PdfExport.generatePdf();
       }
